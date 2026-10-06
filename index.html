@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upeksha & Sam - Wedding Invitation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- JS Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        ivory: '#FFFBF7',
+                        cream: '#FDF6EE',
+                        wine: {
+                            light: '#C13B53',
+                            DEFAULT: '#8C1227',
+                            dark: '#3B0008'
+                        },
+                        gold: {
+                            light: '#F3E5AB',
+                            DEFAULT: '#D4AF37',
+                            dark: '#996515'
+                        },
+                        summer: {
+                            coral: '#FF5E36',
+                            amber: '#FFB300',
+                            peach: '#FFF0E5',
+                            rose: '#F48FB1'
+                        },
+                        slateDark: '#221518',
+                        charcoal: '#2D1B20'
+                    },
+                    fontFamily: {
+                        serif: ['Cormorant Garamond', 'Georgia', 'serif'],
+                        script: ['Great Vibes', 'cursive'],
+                        sinhala: ['Abhaya Libre', 'serif'],
+                        sans: ['Montserrat', 'sans-serif'],
+                        countdown: ['Cormorant Garamond', 'serif']
+                    },
+                    animation: {
+                        'ken-burns': 'kenburns 20s ease-out infinite alternate',
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'spin-slow': 'spin 12s linear infinite'
+                    },
+                    keyframes: {
+                        kenburns: {
+                            '0%': { transform: 'scale(1)' },
+                            '100%': { transform: 'scale(1.08)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFFBF7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #C13B53;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8C1227;
+        }
+        .gold-gradient-text {
+            color: #8C1227;
+        }
+        .vibrant-gradient-text {
+            background: linear-gradient(135deg, #FFB300 0%, #FF5E36 50%, #F48FB1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .btn-gradient {
+            background-color: #8C1227;
+        }
+        .btn-gradient:hover {
+            background-color: #C13B53;
+        }
+        .seal-gradient {
+            background-color: #8C1227;
+        }
+        .glass-card {
+            background: rgba(255, 251, 247, 0.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 94, 54, 0.2);
+        }
+        .glass-nav {
+            background: rgba(255, 251, 247, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .reveal-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal-on-scroll.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .page-pattern {
+            background-color: #FFFBF7;
+        }
+
+        /* Falling Hearts Canvas */
+        #heartCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 35;
+        }
+    </style>
+</head>
+<body class="page-pattern text-charcoal font-sans antialiased selection:bg-wine/20 selection:text-wine-dark overflow-x-hidden">
+
+    <!-- Canvas overlay for falling hearts -->
+    <canvas id="heartCanvas"></canvas>
+
+    <script>
+        const WEDDING_CONFIG = {
+            brideName: "Pabasara Upeksha",
+            groomName: "Sam Ernstsson",
+            brideFirstName: "Upeksha",
+            groomFirstName: "Sam",
+            coupleTagline: "Together with their families",
+            weddingDateISO: "2027-01-30T17:00:00",
+            weddingDateFormatted: "Saturday, January 30, 2027",
+            weddingTimeFormatted: "5:00 PM Sri Lanka Time",
+            
+            ceremony: {
+                title: "Poruwa Ceremony",
+                date: "Saturday, January 30, 2027",
+                time: "5:00 PM - 6:00 PM",
+                venue: "Waters Edge",
+                address: "316 Ethul Kotte Road, Battaramulla",
+                mapSearchQuery: "Waters Edge",
+                googleMapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8883287383187!2d79.90226347570417!3d6.903965918335805!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae259f3cb244e45%3A0x6a111b110a11e1f8!2sWaters%20Edge!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"
+            },
+            
+            reception: {
+                title: "Grand Evening Reception",
+                date: "Saturday, January 30, 2027",
+                time: "7:00 PM - 12:00 AM",
+                venue: "Waters Edge - Orchid's Garden",
+                address: "316 Ethul Kotte Road, Battaramulla",
+                mapSearchQuery: "Waters Edge"
+            },
+
+            schedule: [
+                { time: "5:00 PM", title: "Poruwa Ceremony", desc: "Traditional Sri Lankan ceremony & blessing of vows", icon: "fa-gem" },
+                { time: "7:00 PM", title: "Reception", desc: "Welcome drinks, grand entrance & celebratory dining", icon: "fa-champagne-glasses" },
+                { time: "8:00 PM", title: "Dinner", desc: "Gourmet buffet dinner & celebratory toasts", icon: "fa-utensils" },
+                { time: "11:00 PM", title: "Away", desc: "Farewell send-off as the couple departs", icon: "fa-heart" }
+            ],
+
+            story: [
+                {
+                    year: "Spring 2022",
+                    title: "First Encounter",
+                    desc: "A chance meeting that ignited a deep connection and unforgettable conversations.",
+                    photo: "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    year: "Autumn 2024",
+                    title: "Our Journey",
+                    desc: "Traveling together, sharing dreams, and building our foundation of love.",
+                    photo: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80"
+                },
+                {
+                    year: "Winter 2025",
+                    title: "The Proposal",
+                    desc: "A romantic moment where we decided to spend the rest of our lives together.",
+                    photo: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80"
+                }
+            ]
+        };
+    </script>
+
+    <!-- FIRST PAGE LANDING OVERLAY (Matching Invitation Card Design) -->
+    <div id="invitationOverlay" class="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-3 sm:p-6 transition-all duration-1000 overflow-y-auto">
+        
+        <div class="relative w-full max-w-lg rounded-2xl overflow-hidden border-2 border-yellow-500/40 shadow-2xl bg-gradient-to-b from-[#2A1708] via-[#1B0B04] to-[#120502] text-center p-6 sm:p-10 flex flex-col items-center justify-between min-h-[620px]">
+            
+            <!-- Background Image Blur with Golden Lighting -->
+            <div class="absolute inset-0 bg-cover bg-center opacity-30 mix-blend-luminosity filter blur-sm" style="background-image: url('Gemini_Generated_Image_u5pgxou5pgxou5pg.jpg');"></div>
+            <div class="absolute inset-0 bg-radial-vignette pointer-events-none border-[12px] border-[#3B220B]/40 rounded-2xl"></div>
+
+            <div class="relative z-10 w-full flex flex-col items-center space-y-3">
+                <!-- Sinhala Heading -->
+                <h2 class="font-sinhala text-4xl sm:text-5xl text-amber-100 tracking-wide font-bold drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]">
+                    සාදර ඇරයුමයි!
+                </h2>
+
+                <!-- Subtitle Text -->
+                <p class="font-serif italic text-xs sm:text-sm text-amber-200/90 tracking-wide">
+                    You Are Cordially Invited to Celebrate the Wedding of
+                </p>
+
+                <!-- Couple Names in Cursive Script Font -->
+                <h1 class="font-script text-5xl sm:text-6xl text-amber-100 font-normal tracking-wide drop-shadow-md py-1">
+                    Upeksha &amp; Sam
+                </h1>
+            </div>
+
+            <!-- Central Couple Image -->
+            <div class="relative z-10 my-4 w-full max-w-xs sm:max-w-sm rounded-xl overflow-hidden border border-amber-500/30 shadow-2xl group">
+                <img src="Gemini_Generated_Image_u5pgxou5pgxou5pg.jpg" alt="Upeksha and Sam Wedding" class="w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-700">
+            </div>
+
+            <div class="relative z-10 w-full flex flex-col items-center space-y-4">
+                <!-- Date Banner Text -->
+                <p class="font-serif text-lg sm:text-xl text-amber-200 font-medium tracking-widest drop-shadow-sm">
+                    30 January 2027
+                </p>
+
+                <!-- Open Invitation Button -->
+                <button onclick="openInvitation()" class="relative group overflow-hidden rounded-full border border-amber-400/60 bg-gradient-to-r from-[#8C1227] via-[#5C0A18] to-[#8C1227] px-8 py-3 text-amber-100 font-serif font-semibold text-sm tracking-widest uppercase shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-amber-500/20">
+                    <span class="relative z-10 flex items-center space-x-2">
+                        <span>OPEN INVITATION</span>
+                        <i class="fa-solid fa-heart text-xs text-amber-300"></i>
+                    </span>
+                    <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Background Music Controller Toggle -->
+    <div class="fixed bottom-6 right-6 z-40">
+        <button id="musicToggleBtn" onclick="toggleAudio()" class="w-12 h-12 rounded-full glass-card flex items-center justify-center text-wine hover:text-summer-coral shadow-lg hover:shadow-xl transition-all duration-300 group border border-wine/20" title="Toggle Music">
+            <i id="musicIcon" class="fa-solid fa-music text-lg group-hover:scale-110 transition-transform"></i>
+        </button>
+        <audio id="bgAudio" loop src="a-thousand-years.mp3"></audio>
+    </div>
+
+    <!-- Top Sticky Navigation -->
+    <header class="fixed top-0 left-0 w-full z-30 glass-nav border-b border-wine/10 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="#hero" class="flex items-center space-x-2 group">
+                    <span class="w-10 h-10 rounded-full border border-wine/30 flex items-center justify-center font-serif text-lg font-semibold text-wine group-hover:border-wine transition-colors bg-white/50">
+                        U&S
+                    </span>
+                    <span class="font-serif text-xl font-semibold tracking-wider text-slateDark hidden sm:inline-block">Upeksha & Sam</span>
+                </a>
+
+                <nav class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-medium text-slateDark">
+                    <a href="#story" class="hover:text-wine transition-colors">Our Story</a>
+                    <a href="#details" class="hover:text-wine transition-colors">Details</a>
+                    <a href="#schedule" class="hover:text-wine transition-colors">Schedule</a>
+                    <a href="#venue" class="hover:text-wine transition-colors">Venue</a>
+                </nav>
+
+                <button id="mobileMenuBtn" onclick="toggleMobileMenu()" class="md:hidden p-2 text-slateDark hover:text-wine focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="mobileDrawer" class="hidden md:hidden bg-ivory border-b border-wine/10 px-6 pt-4 pb-6 space-y-4 text-center uppercase tracking-widest text-xs font-medium text-slateDark">
+            <a href="#story" onclick="toggleMobileMenu()" class="block py-2 border-b border-wine/10">Our Story</a>
+            <a href="#details" onclick="toggleMobileMenu()" class="block py-2 border-b border-wine/10">Details</a>
+            <a href="#schedule" onclick="toggleMobileMenu()" class="block py-2 border-b border-wine/10">Schedule</a>
+            <a href="#venue" onclick="toggleMobileMenu()" class="block py-2 border-b border-wine/10">Venue</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <div class="absolute inset-0 z-0 overflow-hidden">
+            <img src="Gemini_Generated_Image_u5pgxou5pgxou5pg.jpg" 
+                 alt="Wedding Hero Background" 
+                 class="w-full h-full object-cover object-center animate-ken-burns filter brightness-75">
+            <div class="absolute inset-0 bg-gradient-to-b from-black/70 via-black/30 to-ivory"></div>
+        </div>
+
+        <div class="relative z-10 max-w-4xl mx-auto text-center px-4 sm:px-6 py-12 flex flex-col items-center">
+
+            <p class="text-xs sm:text-sm uppercase tracking-[0.3em] text-amber-300 font-bold mb-3 drop-shadow">
+                <span id="heroTagline">Together with their families</span>
+            </p>
+
+            <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl text-ivory font-semibold tracking-wide leading-tight mb-2 drop-shadow-lg">
+                <span id="heroBride">Pabasara Upeksha</span>
+            </h1>
+
+            <div class="my-1 sm:my-3">
+                <span class="font-serif text-3xl sm:text-5xl italic text-amber-300 drop-shadow">&amp;</span>
+            </div>
+
+            <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl text-ivory font-semibold tracking-wide leading-tight mb-6 drop-shadow-lg">
+                <span id="heroGroom">Sam Ernstsson</span>
+            </h1>
+
+            <p class="font-serif italic text-lg sm:text-2xl text-ivory/90 mb-6 drop-shadow-sm">
+                invite you to celebrate their wedding
+            </p>
+
+            <div class="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-wine/30 glass-card mb-10 shadow-sm">
+                <i class="fa-regular fa-calendar-heart text-wine"></i>
+                <span id="heroDateFormatted" class="text-xs sm:text-sm font-semibold tracking-wider text-slateDark uppercase">
+                    Saturday, January 30, 2027
+                </span>
+            </div>
+
+            <div class="flex flex-wrap items-center justify-center gap-4">
+                <a href="#details" class="px-8 py-3 bg-wine hover:bg-wine-light text-white font-semibold text-xs tracking-widest uppercase rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+                    Explore Invitation
+                </a>
+                <button onclick="downloadICS()" class="px-6 py-3 glass-card hover:bg-white text-slateDark border border-wine/20 font-semibold text-xs tracking-widest uppercase rounded-full shadow-sm hover:shadow transition-all duration-300 flex items-center space-x-2">
+                    <i class="fa-regular fa-calendar-plus text-wine"></i>
+                    <span>Add to Calendar</span>
+                </button>
+            </div>
+
+            <a href="#countdown" class="mt-16 text-wine hover:text-summer-coral transition-colors animate-float">
+                <i class="fa-solid fa-chevron-down text-xl"></i>
+            </a>
+        </div>
+    </section>
+
+    <!-- Countdown Timer Section -->
+    <section id="countdown" class="py-16 bg-gradient-to-r from-summer-peach/60 via-summer-rose/30 to-summer-peach/60 border-y border-wine/10 relative">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h2 class="font-serif text-2xl sm:text-3xl text-slateDark italic mb-2">Counting Down To Our Special Day</h2>
+            <div class="w-16 h-0.5 bg-summer-coral mx-auto mb-8"></div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 max-w-3xl mx-auto">
+                <div class="glass-card p-4 sm:p-6 rounded-2xl border border-wine/20 shadow-sm flex flex-col items-center">
+                    <span id="cdDays" class="font-serif text-5xl sm:text-7xl font-semibold text-wine mb-1">00</span>
+                    <span class="text-xs uppercase tracking-widest text-slateDark/70 font-semibold">Days</span>
+                </div>
+                <div class="glass-card p-4 sm:p-6 rounded-2xl border border-wine/20 shadow-sm flex flex-col items-center">
+                    <span id="cdHours" class="font-serif text-5xl sm:text-7xl font-semibold text-wine mb-1">00</span>
+                    <span class="text-xs uppercase tracking-widest text-slateDark/70 font-semibold">Hours</span>
+                </div>
+                <div class="glass-card p-4 sm:p-6 rounded-2xl border border-wine/20 shadow-sm flex flex-col items-center">
+                    <span id="cdMinutes" class="font-serif text-5xl sm:text-7xl font-semibold text-wine mb-1">00</span>
+                    <span class="text-xs uppercase tracking-widest text-slateDark/70 font-semibold">Minutes</span>
+                </div>
+                <div class="glass-card p-4 sm:p-6 rounded-2xl border border-wine/20 shadow-sm flex flex-col items-center">
+                    <span id="cdSeconds" class="font-serif text-5xl sm:text-7xl font-semibold text-wine mb-1">00</span>
+                    <span class="text-xs uppercase tracking-widest text-slateDark/70 font-semibold">Seconds</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story Timeline Section -->
+    <section id="story" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 reveal-on-scroll">
+        <div class="text-center mb-16">
+            <span class="text-xs uppercase tracking-[0.25em] text-wine font-semibold">How We Began</span>
+            <h2 class="font-serif text-3xl sm:text-5xl text-slateDark mt-2">Our Love Story</h2>
+            <div class="w-12 h-0.5 bg-summer-coral mx-auto mt-4"></div>
+        </div>
+
+        <div id="storyContainer" class="space-y-16"></div>
+    </section>
+
+    <!-- Wedding Details Section -->
+    <section id="details" class="py-24 bg-gradient-to-b from-summer-peach/40 via-white to-summer-peach/40 relative reveal-on-scroll">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-16">
+                <span class="text-xs uppercase tracking-[0.25em] text-wine font-semibold">Join Us</span>
+                <h2 class="font-serif text-3xl sm:text-5xl text-slateDark mt-2">Wedding Details</h2>
+                <div class="w-12 h-0.5 bg-summer-coral mx-auto mt-4"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mb-12">
+                
+                <!-- Ceremony Card -->
+                <div class="glass-card p-8 sm:p-10 rounded-3xl border border-wine/20 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-full bg-wine/10 border border-wine/20 flex items-center justify-center text-wine mb-6">
+                            <i class="fa-solid fa-gem text-xl"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl sm:text-3xl text-slateDark font-semibold mb-2" id="ceremonyTitle">Poruwa Ceremony</h3>
+                        <p class="text-xs uppercase tracking-widest text-wine font-semibold mb-6">The Marriage Blessing</p>
+
+                        <div class="space-y-4 text-sm text-slateDark/80">
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-regular fa-calendar text-wine mt-1"></i>
+                                <div><strong class="text-slateDark">Date:</strong> <span id="ceremonyDate">Saturday, January 30, 2027</span></div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-regular fa-clock text-wine mt-1"></i>
+                                <div><strong class="text-slateDark">Time:</strong> <span id="ceremonyTime">5:00 PM - 6:00 PM</span></div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-location-dot text-wine mt-1"></i>
+                                <div>
+                                    <strong class="text-slateDark">Venue:</strong> <span id="ceremonyVenue">Waters Edge Srilanka</span><br>
+                                    <span id="ceremonyAddress" class="text-xs text-slateDark/70">316 Ethul Kotte Road, Battaramulla</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-wine/10 flex items-center justify-between">
+                        <a href="#venue" class="text-xs uppercase tracking-wider font-semibold text-wine hover:text-summer-coral flex items-center space-x-1">
+                            <span>View Venue Map</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Reception Card -->
+                <div class="glass-card p-8 sm:p-10 rounded-3xl border border-wine/20 shadow-md hover:shadow-xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 rounded-full bg-wine/10 border border-wine/20 flex items-center justify-center text-wine mb-6">
+                            <i class="fa-solid fa-champagne-glasses text-xl"></i>
+                        </div>
+                        <h3 class="font-serif text-2xl sm:text-3xl text-slateDark font-semibold mb-2" id="receptionTitle">Grand Evening Reception</h3>
+                        <p class="text-xs uppercase tracking-widest text-wine font-semibold mb-6">Dinner, Drinks & Dancing</p>
+
+                        <div class="space-y-4 text-sm text-slateDark/80">
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-regular fa-calendar text-wine mt-1"></i>
+                                <div><strong class="text-slateDark">Date:</strong> <span id="receptionDate">Saturday, January 30, 2027</span></div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-regular fa-clock text-wine mt-1"></i>
+                                <div><strong class="text-slateDark">Time:</strong> <span id="receptionTime">7:00 PM - 12:00 AM</span></div>
+                            </div>
+                            <div class="flex items-start space-x-3">
+                                <i class="fa-solid fa-location-dot text-wine mt-1"></i>
+                                <div>
+                                    <strong class="text-slateDark">Venue:</strong> <span id="receptionVenue">Waters Edge - Orchid's Garden Hall</span><br>
+                                    <span id="receptionAddress" class="text-xs text-slateDark/70">316 Ethul Kotte Road, Battaramulla</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-wine/10 flex items-center justify-between">
+                        <a href="#venue" class="text-xs uppercase tracking-wider font-semibold text-wine hover:text-summer-coral flex items-center space-x-1">
+                            <span>Get Directions</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Contact & RSVP Card -->
+            <div class="max-w-2xl mx-auto glass-card p-8 rounded-3xl border border-wine/20 shadow-md text-center">
+                <div class="w-12 h-12 rounded-full bg-wine/10 border border-wine/20 flex items-center justify-center text-wine mx-auto mb-4">
+                    <i class="fa-solid fa-phone text-lg"></i>
+                </div>
+                <h3 class="font-serif text-2xl text-slateDark font-semibold mb-1">Contact &amp; RSVP</h3>
+                <p class="text-xs uppercase tracking-widest text-wine font-semibold mb-6">For inquiries or to confirm attendance</p>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-6 text-sm text-slateDark font-medium">
+                    <a href="tel:0761651223" class="flex items-center space-x-3 bg-white/70 px-6 py-3 rounded-full border border-wine/20 hover:border-wine transition-colors">
+                        <i class="fa-solid fa-mobile-screen text-wine"></i>
+                        <span>Upeksha: <strong>0761651223</strong></span>
+                    </a>
+                    <a href="tel:0773375149" class="flex items-center space-x-3 bg-white/70 px-6 py-3 rounded-full border border-wine/20 hover:border-wine transition-colors">
+                        <i class="fa-solid fa-mobile-screen text-wine"></i>
+                        <span>Waruna: <strong>0773375149</strong></span>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule" class="py-24 max-w-4xl mx-auto px-4 sm:px-6 reveal-on-scroll">
+        <div class="text-center mb-16">
+            <span class="text-xs uppercase tracking-[0.25em] text-wine font-semibold">The Itinerary</span>
+            <h2 class="font-serif text-3xl sm:text-5xl text-slateDark mt-2">Wedding Day Schedule</h2>
+            <div class="w-12 h-0.5 bg-summer-coral mx-auto mt-4"></div>
+        </div>
+
+        <div class="relative border-l-2 border-wine/20 ml-4 sm:ml-32 space-y-12">
+            <div id="scheduleTimelineContainer"></div>
+        </div>
+    </section>
+
+    <!-- Venue Section -->
+    <section id="venue" class="py-24 max-w-6xl mx-auto px-4 sm:px-6 reveal-on-scroll">
+        <div class="text-center mb-16">
+            <span class="text-xs uppercase tracking-[0.25em] text-wine font-semibold">Location</span>
+            <h2 class="font-serif text-3xl sm:text-5xl text-slateDark mt-2">The Venue</h2>
+            <div class="w-12 h-0.5 bg-summer-coral mx-auto mt-4"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+            <div class="glass-card p-8 rounded-3xl border border-wine/20 flex flex-col justify-between">
+                <div>
+                    <h3 id="venueCardTitle" class="font-serif text-2xl text-slateDark font-semibold mb-2">Waters Edge Srilanka</h3>
+                    <p id="venueCardAddress" class="text-sm text-slateDark/70 mb-6">316 Ethul Kotte Road, Battaramulla</p>
+                    <p class="text-sm text-slateDark/80 leading-relaxed mb-6">
+                        Orchid's Garden Hall offers a luxury setting with picturesque views for our special day.
+                    </p>
+                </div>
+                <div>
+                    <a id="googleMapsBtn" href="https://maps.app.google.com/KStp2juMtB5moxZC7" target="_blank" class="w-full py-3 bg-wine hover:bg-wine-light text-white text-center font-semibold text-xs uppercase tracking-widest rounded-full transition-colors flex items-center justify-center space-x-2 shadow-md">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <span>Open in Google Maps</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 rounded-3xl overflow-hidden border border-wine/20 shadow-md min-h-[350px]">
+                <iframe id="googleMapIframe" class="w-full h-full min-h-[350px] border-0" loading="lazy" allowfullscreen src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3960.8883287383187!2d79.90226347570417!3d6.903965918335805!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ae259f3cb244e45%3A0x6a111b110a11e1f8!2sWaters%20Edge!5e0!3m2!1sen!2slk!4v1700000000000!5m2!1sen!2slk"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 bg-wine-dark text-ivory text-center relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 relative z-10">
+
+            <h2 class="font-serif text-3xl sm:text-5xl italic font-normal mb-4">
+                We can't wait to celebrate this beautiful day with you.
+            </h2>
+            <p class="font-serif text-2xl text-summer-amber mb-8">
+                <span id="footerBride">Upeksha</span> & <span id="footerGroom">Sam</span>
+            </p>
+
+            <div class="text-xs uppercase tracking-widest text-ivory/60 mb-10" id="footerDate">
+                Saturday, January 30, 2027
+            </div>
+
+            <div class="pt-8 border-t border-ivory/10 flex flex-col sm:flex-row items-center justify-between text-xs text-ivory/40">
+                <p>&copy; 2027 Upeksha & Sam. All Rights Reserved.</p>
+                <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="mt-4 sm:mt-0 text-summer-amber hover:text-white transition-colors flex items-center space-x-1">
+                    <span>Back To Top</span>
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Main Interactive Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            populateConfigData();
+            initCountdown();
+            renderStoryTimeline();
+            renderSchedule();
+            setupScrollObserver();
+            initHearts();
+        });
+
+        // Falling Hearts Animation Script
+        function initHearts() {
+            const canvas = document.getElementById('heartCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const colors = [
+                'rgba(255, 94, 54, 0.85)',
+                'rgba(255, 179, 0, 0.9)',
+                'rgba(193, 59, 83, 0.75)',
+                'rgba(244, 143, 177, 0.85)'
+            ];
+
+            const hearts = [];
+            const heartCount = 15;
+
+            for (let i = 0; i < heartCount; i++) {
+                hearts.push({
+                    x: Math.random() * width,
+                    y: Math.random() * height - height,
+                    size: Math.random() * 12 + 8,
+                    speedY: Math.random() * 1.2 + 0.8,
+                    speedX: Math.random() * 0.8 - 0.4,
+                    rotation: Math.random() * 40 - 20,
+                    rotationSpeed: Math.random() * 0.8 - 0.4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    opacity: Math.random() * 0.5 + 0.5
+                });
+            }
+
+            function drawHeart(heart) {
+                ctx.save();
+                ctx.translate(heart.x, heart.y);
+                ctx.rotate((heart.rotation * Math.PI) / 180);
+                ctx.fillStyle = heart.color;
+                ctx.globalAlpha = heart.opacity;
+
+                const s = heart.size;
+                ctx.beginPath();
+                ctx.moveTo(0, s / 4);
+                ctx.quadraticCurveTo(0, 0, s / 4, 0);
+                ctx.quadraticCurveTo(s / 2, 0, s / 2, s / 4);
+                ctx.quadraticCurveTo(s / 2, 0, (3 * s) / 4, 0);
+                ctx.quadraticCurveTo(s, 0, s, s / 4);
+                ctx.quadraticCurveTo(s, s / 2, (3 * s) / 4, (3 * s) / 4);
+                ctx.lineTo(s / 2, s);
+                ctx.lineTo(s / 4, (3 * s) / 4);
+                ctx.quadraticCurveTo(0, s / 2, 0, s / 4);
+                ctx.closePath();
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+
+                hearts.forEach(h => {
+                    h.y += h.speedY;
+                    h.x += Math.sin(h.y * 0.01) + h.speedX;
+                    h.rotation += h.rotationSpeed;
+
+                    if (h.y > height + 20) {
+                        h.y = -20;
+                        h.x = Math.random() * width;
+                    }
+                    if (h.x > width + 20) h.x = -20;
+                    if (h.x < -20) h.x = width + 20;
+
+                    drawHeart(h);
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        }
+
+        function openInvitation() {
+            const overlay = document.getElementById('invitationOverlay');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+            
+            const audio = document.getElementById('bgAudio');
+            const icon = document.getElementById('musicIcon');
+            audio.play().then(() => {
+                icon.className = "fa-solid fa-pause text-lg";
+            }).catch(e => {
+                console.log("Audio play prevented: ", e);
+            });
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 1000);
+        }
+
+        function populateConfigData() {
+            document.getElementById('heroBride').innerText = WEDDING_CONFIG.brideName;
+            document.getElementById('heroGroom').innerText = WEDDING_CONFIG.groomName;
+            document.getElementById('heroTagline').innerText = WEDDING_CONFIG.coupleTagline;
+            document.getElementById('heroDateFormatted').innerText = WEDDING_CONFIG.weddingDateFormatted;
+
+            document.getElementById('ceremonyTitle').innerText = WEDDING_CONFIG.ceremony.title;
+            document.getElementById('ceremonyDate').innerText = WEDDING_CONFIG.ceremony.date;
+            document.getElementById('ceremonyTime').innerText = WEDDING_CONFIG.ceremony.time;
+            document.getElementById('ceremonyVenue').innerText = WEDDING_CONFIG.ceremony.venue;
+            document.getElementById('ceremonyAddress').innerText = WEDDING_CONFIG.ceremony.address;
+
+            document.getElementById('receptionTitle').innerText = WEDDING_CONFIG.reception.title;
+            document.getElementById('receptionDate').innerText = WEDDING_CONFIG.reception.date;
+            document.getElementById('receptionTime').innerText = WEDDING_CONFIG.reception.time;
+            document.getElementById('receptionVenue').innerText = WEDDING_CONFIG.reception.venue;
+            document.getElementById('receptionAddress').innerText = WEDDING_CONFIG.reception.address;
+
+            document.getElementById('venueCardTitle').innerText = WEDDING_CONFIG.ceremony.venue;
+            document.getElementById('venueCardAddress').innerText = WEDDING_CONFIG.ceremony.address;
+            document.getElementById('googleMapsBtn').href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(WEDDING_CONFIG.ceremony.mapSearchQuery)}`;
+            document.getElementById('googleMapIframe').src = WEDDING_CONFIG.ceremony.googleMapsEmbedUrl;
+
+            document.getElementById('footerBride').innerText = WEDDING_CONFIG.brideFirstName;
+            document.getElementById('footerGroom').innerText = WEDDING_CONFIG.groomFirstName;
+            document.getElementById('footerDate').innerText = WEDDING_CONFIG.weddingDateFormatted;
+        }
+
+        function initCountdown() {
+            const targetDate = new Date(WEDDING_CONFIG.weddingDateISO).getTime();
+
+            function updateTimer() {
+                const now = new Date().getTime();
+                const diff = targetDate - now;
+
+                if (diff <= 0) {
+                    document.getElementById('cdDays').innerText = "00";
+                    document.getElementById('cdHours').innerText = "00";
+                    document.getElementById('cdMinutes').innerText = "00";
+                    document.getElementById('cdSeconds').innerText = "00";
+                    return;
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('cdDays').innerText = days < 10 ? '0' + days : days;
+                document.getElementById('cdHours').innerText = hours < 10 ? '0' + hours : hours;
+                document.getElementById('cdMinutes').innerText = minutes < 10 ? '0' + minutes : minutes;
+                document.getElementById('cdSeconds').innerText = seconds < 10 ? '0' + seconds : seconds;
+            }
+
+            updateTimer();
+            setInterval(updateTimer, 1000);
+        }
+
+        function renderStoryTimeline() {
+            const container = document.getElementById('storyContainer');
+            container.innerHTML = '';
+
+            WEDDING_CONFIG.story.forEach((item, index) => {
+                const isEven = index % 2 === 0;
+                const html = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center ${isEven ? '' : 'md:flex-row-reverse'}">
+                        <div class="${isEven ? 'md:order-1' : 'md:order-2'}">
+                            <div class="rounded-2xl overflow-hidden border border-wine/20 shadow-lg">
+                                <img src="${item.photo}" alt="${item.title}" class="w-full h-72 sm:h-96 object-cover hover:scale-105 transition-transform duration-500">
+                            </div>
+                        </div>
+                        <div class="${isEven ? 'md:order-2' : 'md:order-1'} space-y-3">
+                            <span class="text-xs uppercase font-bold tracking-widest text-wine">${item.year}</span>
+                            <h3 class="font-serif text-2xl sm:text-3xl text-slateDark">${item.title}</h3>
+                            <p class="text-sm text-slateDark/80 leading-relaxed">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function renderSchedule() {
+            const container = document.getElementById('scheduleTimelineContainer');
+            container.innerHTML = '';
+
+            WEDDING_CONFIG.schedule.forEach((item) => {
+                const html = `
+                    <div class="relative pl-8 sm:pl-10 group">
+                        <div class="absolute -left-3.5 top-0 w-7 h-7 rounded-full bg-ivory border-2 border-wine flex items-center justify-center text-wine group-hover:bg-wine group-hover:text-white transition-colors shadow-sm">
+                            <i class="fa-solid ${item.icon} text-xs"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-wine">${item.time}</span>
+                            <h3 class="font-serif text-xl sm:text-2xl text-slateDark font-medium mt-0.5">${item.title}</h3>
+                            <p class="text-xs sm:text-sm text-slateDark/70 mt-1">${item.desc}</p>
+                        </div>
+                    </div>
+                `;
+                container.insertAdjacentHTML('beforeend', html);
+            });
+        }
+
+        function toggleAudio() {
+            const audio = document.getElementById('bgAudio');
+            const icon = document.getElementById('musicIcon');
+
+            if (audio.paused) {
+                audio.play();
+                icon.className = "fa-solid fa-pause text-lg";
+            } else {
+                audio.pause();
+                icon.className = "fa-solid fa-music text-lg";
+            }
+        }
+
+        function toggleMobileMenu() {
+            const drawer = document.getElementById('mobileDrawer');
+            drawer.classList.toggle('hidden');
+        }
+
+        function downloadICS() {
+            const title = `${WEDDING_CONFIG.brideName} & ${WEDDING_CONFIG.groomName}'s Wedding`;
+            const icsData = `BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Digital Wedding Invitation//EN
+BEGIN:VEVENT
+SUMMARY:${title}
+DESCRIPTION:Wedding celebration for ${WEDDING_CONFIG.brideName} and ${WEDDING_CONFIG.groomName}
+LOCATION:${WEDDING_CONFIG.ceremony.venue}, ${WEDDING_CONFIG.ceremony.address}
+DTSTART:20270130T170000Z
+DTEND:20270130T235900Z
+END:VEVENT
+END:VCALENDAR`;
+
+            const blob = new Blob([icsData], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = window.URL.createObjectURL(blob);
+            link.setAttribute('download', 'wedding-invitation.ics');
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function setupScrollObserver() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+                observer.observe(el);
+            });
+        }
+    </script>
+</body>
+</html>
